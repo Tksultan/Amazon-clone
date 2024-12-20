@@ -1,4 +1,4 @@
-import {cart} from '../data/cart.js';
+import {cart, addtocart} from '../data/cart.js';
 import {products} from '../data/products.js';
 let productsHTML = '';
 
@@ -53,46 +53,8 @@ products.forEach((product) => {
   `;
 });
 
-
-document.querySelector('.js-pd-grid').innerHTML = productsHTML;
-
-document.querySelectorAll('.js-add-to-cart')
-  .forEach((button) => {
-    button.addEventListener('click', () => {
-      const productId = button.dataset.productId;
-
-      let matchingItem;
-
-      cart.forEach((item) => {
-        if (productId === item.productId) {
-          matchingItem = item;
-        }
-      });
-
-      const quantitySelector = document.querySelector(
-        `.js-quantity-selector-${productId}`
-      );
-      const quantity = Number(quantitySelector.value);
-
-      if (matchingItem) {
-        matchingItem.quantity += quantity;
-      } else {
-        cart.push({
-          productId: productId,
-          quantity: quantity
-        });
-      }
-      
-      const productContainer = button.closest('.product-container');
-      const addedToCartElement = productContainer.querySelector('.added-to-cart');
-
-      addedToCartElement.style.opacity = '1';
-
-      setTimeout(() => {
-        addedToCartElement.style.opacity = '0';
-      }, 2000);
-
-      let cartQuantity = 0;
+function updatecartQunt(){
+  let cartQuantity = 0;
 
       cart.forEach((item) => {
         cartQuantity += item.quantity;
@@ -101,6 +63,27 @@ document.querySelectorAll('.js-add-to-cart')
 
       document.querySelector('.js-cart-quanity')
         .innerHTML = cartQuantity;
+}
 
+function showMessage(button) {
+  const productContainer = button.closest('.product-container');
+  const addedToCartElement = productContainer.querySelector('.added-to-cart');
+
+  addedToCartElement.style.opacity = '1';
+
+  setTimeout(() => {
+    addedToCartElement.style.opacity = '0';
+  }, 2000);
+}
+
+document.querySelector('.js-pd-grid').innerHTML = productsHTML;
+
+document.querySelectorAll('.js-add-to-cart')
+  .forEach((button) => {
+    button.addEventListener('click', () => {
+      const productId = button.dataset.productId;
+      addtocart(productId);
+      showMessage(button);
+      updatecartQunt();
     });
   });
